@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Kanekescom\Lingo\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LingoCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-lingo';
 
     public $description = 'My command';
 
