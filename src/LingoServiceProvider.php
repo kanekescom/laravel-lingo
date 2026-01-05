@@ -2,9 +2,9 @@
 
 namespace Kanekescom\Lingo;
 
+use Kanekescom\Lingo\Commands\LingoCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Kanekescom\Lingo\Commands\LingoCommand;
 
 class LingoServiceProvider extends PackageServiceProvider
 {
@@ -17,9 +17,6 @@ class LingoServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-lingo')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel_lingo_table')
             ->hasCommand(LingoCommand::class);
     }
 }

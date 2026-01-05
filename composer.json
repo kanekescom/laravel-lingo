@@ -1,6 +1,6 @@
 {
     "name": "kanekescom/laravel-lingo",
-    "description": "A fluent Laravel translation file manager for syncing, sorting, and managing JSON translation files",
+    "description": "Laravel package to manage, sync, and analyze JSON translation files",
     "keywords": [
         "Kanekescom",
         "laravel",
@@ -12,7 +12,8 @@
         {
             "name": "Achmad Hadi Kurnia",
             "email": "imachmadhadikurnia@gmail.com",
-            "role": "Developer"
+            "role": "Developer",
+            "homepage": "https://linktr.ee/achmadhadikurnia"
         }
     ],
     "require": {
@@ -34,6 +35,9 @@
         "spatie/laravel-ray": "^1.35"
     },
     "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
             "Kanekescom\\Lingo\\": "src/",
             "Kanekescom\\Lingo\\Database\\Factories\\": "database/factories/"
@@ -67,9 +71,30 @@
             ],
             "aliases": {
                 "Lingo": "Kanekescom\\Lingo\\Facades\\Lingo"
+            },
+            "branch-alias": {
+                "dev-main": "v1.x-dev"
             }
         }
     },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/achmadhadikurnia"
+        },
+        {
+            "type": "buymeacoffee",
+            "url": "https://s.id/hadibmac"
+        },
+        {
+            "type": "patreon",
+            "url": "https://s.id/hadipatreon"
+        },
+        {
+            "type": "saweria",
+            "url": "https://s.id/hadisaweria"
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }

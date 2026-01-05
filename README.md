@@ -1,60 +1,172 @@
-# A fluent Laravel translation file manager for syncing, sorting, and managing JSON translation files
+# Laravel Lingo
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/kanekescom/laravel-lingo.svg?style=flat-square)](https://packagist.org/packages/kanekescom/laravel-lingo)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/kanekescom/laravel-lingo/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/kanekescom/laravel-lingo/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/kanekescom/laravel-lingo/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/kanekescom/laravel-lingo/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/kanekescom/laravel-lingo.svg?style=flat-square)](https://packagist.org/packages/kanekescom/laravel-lingo)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Laravel package to manage, sync, and analyze JSON translation files.
 
-## Support us
+## Features
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-lingo.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-lingo)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- 🔍 **Scan** for translation keys in your codebase
+- 📊 **Statistics** on translation progress
+- 🔄 **Sync** translations with source files
+- 🧹 **Clean** and sort translation files
+- 🔧 **Artisan command** for CLI management
+- ⛓️ **Chainable API** with method chaining
 
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require kanekescom/laravel-lingo
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laravel-lingo-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="laravel-lingo-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-lingo-views"
-```
-
 ## Usage
 
+### Using the `lingo()` Helper
+
+The `lingo()` helper provides a fluent interface similar to Laravel's `collect()`:
+
 ```php
-$lingo = new Kanekescom\Lingo();
-echo $lingo->echoPhrase('Hello, Kanekescom!');
+// Load locale and get stats
+lingo()->setLocale('id')->stats();
+
+// Sync translations with views
+lingo()->setLocale('id')->syncWith()->save();
+
+// Scan and add missing keys
+lingo()->setLocale('id')->scanAndAdd('app')->save();
+
+// Scan and remove unused keys
+lingo()->setLocale('id')->scanAndRemove()->save();
+
+// Sort keys alphabetically
+lingo()->setLocale('id')->sortKeys()->save();
+
+// Clean (remove empty values and sort)
+lingo()->setLocale('id')->clean()->save();
+
+// Get only untranslated items
+$untranslated = lingo()->setLocale('id')->onlyUntranslated()->get();
+
+// Get only translated items
+$translated = lingo()->setLocale('id')->onlyTranslated()->get();
+
+// Export to JSON
+$json = lingo()->setLocale('id')->toJson();
 ```
+
+### Using the `Lingo` Facade
+
+```php
+use Kanekescom\Lingo\Lingo;
+
+// Get translation statistics
+$stats = Lingo::stats($translations);
+
+// Find duplicate keys in JSON content
+$duplicates = Lingo::duplicates($jsonContent);
+
+// Sort keys alphabetically
+$sorted = Lingo::sortKeys($translations);
+
+// Find untranslated items
+$untranslated = Lingo::untranslated($translations);
+
+// Scan directory for translation keys
+$keys = Lingo::scanDirectory(resource_path('views'));
+
+// Find missing keys
+$missing = Lingo::missing($translations, $keys);
+
+// Add missing keys
+$updated = Lingo::addMissing($translations, $keys);
+
+// Remove unused keys
+$cleaned = Lingo::removeUnused($translations, $usedKeys);
+
+// Save to file
+Lingo::save(lang_path('id.json'), $translations);
+```
+
+### Artisan Command
+
+```bash
+# Show statistics
+php artisan lingo:manage id
+
+# Check for issues (duplicates, untranslated)
+php artisan lingo:manage id --check
+
+# Sort keys alphabetically
+php artisan lingo:manage id --sort
+
+# Remove duplicate keys
+php artisan lingo:manage id --remove-duplicates
+
+# Scan and add missing keys
+php artisan lingo:manage id --scan=resources/views --add-missing
+
+# Scan and remove unused keys
+php artisan lingo:manage id --scan=resources/views --remove-unused
+
+# Show detailed statistics
+php artisan lingo:manage id --stats
+
+# Combine options
+php artisan lingo:manage id --scan=resources/views --add-missing --sort
+```
+
+### Available Methods
+
+#### LingoBuilder (Fluent API)
+
+| Method | Description |
+|--------|-------------|
+| `setLocale(string $locale)` | Set locale and load translations |
+| `sortKeys(bool $ascending = true)` | Sort keys alphabetically |
+| `clean()` | Remove empty values and sort keys |
+| `addMissing(array $keys)` | Add missing translation keys |
+| `removeUnused(array $usedKeys)` | Remove unused keys |
+| `syncWith(?string $path = null)` | Sync with source files (add missing + remove unused) |
+| `scanAndAdd(?string $path = null)` | Scan and add missing keys |
+| `scanAndRemove(?string $path = null)` | Scan and remove unused keys |
+| `removeEmpty()` | Remove empty values |
+| `removeDuplicates()` | Remove duplicate keys from file |
+| `onlyUntranslated()` | Filter to untranslated items |
+| `onlyTranslated()` | Filter to translated items |
+| `merge(array $translations)` | Merge with another array |
+| `transform(callable $callback)` | Transform using callback |
+| `save(?string $path = null, bool $sort = true)` | Save to file |
+| `toJson(bool $sortKeys = true)` | Export as JSON string |
+| `get()` / `toArray()` | Get translations array |
+| `stats()` | Get translation statistics |
+| `count()` | Get count of translations |
+| `isEmpty()` / `isNotEmpty()` | Check if empty |
+
+#### Lingo (Static Methods)
+
+| Method | Description |
+|--------|-------------|
+| `make(array $translations = [])` | Create LingoBuilder instance |
+| `duplicates(string $jsonContent)` | Find duplicate keys |
+| `hasDuplicates(string $jsonContent)` | Check for duplicates |
+| `removeDuplicates(string $jsonContent)` | Remove duplicates |
+| `load(string $filePath)` | Load translation file |
+| `save(string $filePath, array $translations, bool $sort = true)` | Save to file |
+| `sortKeys(array $translations, bool $ascending = true)` | Sort keys |
+| `untranslated(array $translations)` | Get untranslated items |
+| `translated(array $translations)` | Get translated items |
+| `stats(array $translations)` | Get statistics |
+| `clean(array $translations)` | Clean translations |
+| `toJson(array $translations, bool $sortKeys = true)` | Export as JSON |
+| `scanDirectory(string $directory, array $extensions = ['php'])` | Scan for keys |
+| `extractKeys(string $content)` | Extract keys from content |
+| `missing(array $translations, array $keys)` | Find missing keys |
+| `addMissing(array $translations, array $keys)` | Add missing keys |
+| `unused(array $translations, array $usedKeys)` | Find unused keys |
+| `removeUnused(array $translations, array $usedKeys)` | Remove unused keys |
 
 ## Testing
 
