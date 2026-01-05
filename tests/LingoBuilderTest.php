@@ -185,10 +185,10 @@ describe('LingoBuilder chainable methods', function () {
     });
 
     it('can save to file', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-test-' . uniqid();
+        $tempDir = sys_get_temp_dir().'/lingo-test-'.uniqid();
         @mkdir($tempDir, 0777, true);
 
-        $filePath = $tempDir . '/translations.json';
+        $filePath = $tempDir.'/translations.json';
         $builder = LingoBuilder::make(['Hello' => 'Halo', 'World' => 'Dunia']);
 
         $result = $builder->save($filePath);
@@ -208,7 +208,7 @@ describe('LingoBuilder chainable methods', function () {
     it('throws exception when saving without path and locale', function () {
         $builder = LingoBuilder::make(['Hello' => 'Halo']);
 
-        expect(fn() => $builder->save())->toThrow(\InvalidArgumentException::class);
+        expect(fn () => $builder->save())->toThrow(\InvalidArgumentException::class);
     });
 
     it('can chain multiple operations', function () {

@@ -179,10 +179,10 @@ describe('Lingo static methods', function () {
     });
 
     it('can save and load translation files', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-test-' . uniqid();
+        $tempDir = sys_get_temp_dir().'/lingo-test-'.uniqid();
         @mkdir($tempDir, 0777, true);
 
-        $filePath = $tempDir . '/test.json';
+        $filePath = $tempDir.'/test.json';
         $translations = ['Hello' => 'Halo', 'World' => 'Dunia'];
 
         $saved = Lingo::save($filePath, $translations);
@@ -205,12 +205,12 @@ describe('Lingo static methods', function () {
     });
 
     it('can scan directory for translation keys', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-scan-test-' . uniqid();
+        $tempDir = sys_get_temp_dir().'/lingo-scan-test-'.uniqid();
         @mkdir($tempDir, 0777, true);
 
         // Create a test PHP file
         $phpContent = "<?php echo __('Test Key'); echo trans('Another Key');";
-        file_put_contents($tempDir . '/test.php', $phpContent);
+        file_put_contents($tempDir.'/test.php', $phpContent);
 
         $keys = Lingo::scanDirectory($tempDir);
 
@@ -218,7 +218,7 @@ describe('Lingo static methods', function () {
         expect($keys)->toContain('Another Key');
 
         // Cleanup
-        @unlink($tempDir . '/test.php');
+        @unlink($tempDir.'/test.php');
         @rmdir($tempDir);
     });
 });
