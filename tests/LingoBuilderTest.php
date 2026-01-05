@@ -3,31 +3,31 @@
 use Kanekescom\Lingo\Lingo;
 use Kanekescom\Lingo\LingoBuilder;
 
-beforeEach(function () {
-    $this->tempDir = sys_get_temp_dir() . '/lingo-builder-test-' . uniqid();
-    mkdir($this->tempDir, 0777, true);
-});
+describe('LingoBuilder chainable methods', function () {
+    beforeEach(function () {
+        $this->tempDir = sys_get_temp_dir() . '/lingo-builder-test-' . uniqid();
+        mkdir($this->tempDir, 0777, true);
+    });
 
-afterEach(function () {
-    if (is_dir($this->tempDir)) {
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->tempDir, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
-        );
+    afterEach(function () {
+        if (is_dir($this->tempDir)) {
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($this->tempDir, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
 
-        foreach ($files as $file) {
-            if ($file->isDir()) {
-                rmdir($file->getRealPath());
-            } else {
-                unlink($file->getRealPath());
+            foreach ($files as $file) {
+                if ($file->isDir()) {
+                    rmdir($file->getRealPath());
+                } else {
+                    unlink($file->getRealPath());
+                }
             }
+
+            rmdir($this->tempDir);
         }
+    });
 
-        rmdir($this->tempDir);
-    }
-});
-
-describe('LingoBuilder fluent methods', function () {
     it('can be created via Lingo::make', function () {
         $builder = Lingo::make(['Hello' => 'Halo']);
 

@@ -2,32 +2,32 @@
 
 use Kanekescom\Lingo\Lingo;
 
-beforeEach(function () {
-    $this->tempDir = sys_get_temp_dir() . '/lingo-test-' . uniqid();
-    mkdir($this->tempDir, 0777, true);
-});
-
-afterEach(function () {
-    // Clean up temp directory
-    if (is_dir($this->tempDir)) {
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->tempDir, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($files as $file) {
-            if ($file->isDir()) {
-                rmdir($file->getRealPath());
-            } else {
-                unlink($file->getRealPath());
-            }
-        }
-
-        rmdir($this->tempDir);
-    }
-});
-
 describe('Lingo static methods', function () {
+    beforeEach(function () {
+        $this->tempDir = sys_get_temp_dir() . '/lingo-test-' . uniqid();
+        mkdir($this->tempDir, 0777, true);
+    });
+
+    afterEach(function () {
+        // Clean up temp directory
+        if (is_dir($this->tempDir)) {
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($this->tempDir, RecursiveDirectoryIterator::SKIP_DOTS),
+                RecursiveIteratorIterator::CHILD_FIRST
+            );
+
+            foreach ($files as $file) {
+                if ($file->isDir()) {
+                    rmdir($file->getRealPath());
+                } else {
+                    unlink($file->getRealPath());
+                }
+            }
+
+            rmdir($this->tempDir);
+        }
+    });
+
     it('can find duplicates in JSON content', function () {
         $json = '{"key1": "value1", "key2": "value2", "key1": "duplicate"}';
 
