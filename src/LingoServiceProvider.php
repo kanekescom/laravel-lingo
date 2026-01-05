@@ -2,7 +2,10 @@
 
 namespace Kanekescom\Lingo;
 
-use Kanekescom\Lingo\Commands\LingoCommand;
+use Kanekescom\Lingo\Commands\LingoCheckCommand;
+use Kanekescom\Lingo\Commands\LingoSortCommand;
+use Kanekescom\Lingo\Commands\LingoStatsCommand;
+use Kanekescom\Lingo\Commands\LingoSyncCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -17,6 +20,11 @@ class LingoServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-lingo')
-            ->hasCommand(LingoCommand::class);
+            ->hasCommands([
+                LingoCheckCommand::class,
+                LingoSyncCommand::class,
+                LingoSortCommand::class,
+                LingoStatsCommand::class,
+            ]);
     }
 }

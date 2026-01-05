@@ -90,32 +90,29 @@ $cleaned = Lingo::removeUnused($translations, $usedKeys);
 Lingo::save(lang_path('id.json'), $translations);
 ```
 
-### Artisan Command
+### Artisan Commands
+
+Lingo provides focused commands for each task:
 
 ```bash
-# Show statistics
-php artisan lingo:manage id
-
 # Check for issues (duplicates, untranslated)
-php artisan lingo:manage id --check
+php artisan lingo:check id
+php artisan lingo:check id --fix          # Auto-fix duplicates
+
+# Show translation statistics
+php artisan lingo:stats id
+php artisan lingo:stats id --detailed     # With samples
 
 # Sort keys alphabetically
-php artisan lingo:manage id --sort
+php artisan lingo:sort id
+php artisan lingo:sort id --desc          # Z-A order
 
-# Remove duplicate keys
-php artisan lingo:manage id --remove-duplicates
-
-# Scan and add missing keys
-php artisan lingo:manage id --scan=resources/views --add-missing
-
-# Scan and remove unused keys
-php artisan lingo:manage id --scan=resources/views --remove-unused
-
-# Show detailed statistics
-php artisan lingo:manage id --stats
-
-# Combine options
-php artisan lingo:manage id --scan=resources/views --add-missing --sort
+# Sync with source files
+php artisan lingo:sync id --path=resources/views
+php artisan lingo:sync id --add           # Add missing keys
+php artisan lingo:sync id --remove        # Remove unused keys
+php artisan lingo:sync id --add --remove  # Both
+php artisan lingo:sync id --dry-run       # Preview changes
 ```
 
 ### Available Methods
