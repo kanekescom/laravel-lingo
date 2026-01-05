@@ -185,8 +185,10 @@ describe('LingoBuilder chainable methods', function () {
     });
 
     it('can save to file', function () {
-        $tempDir = sys_get_temp_dir().'/lingo-test-'.uniqid();
-        @mkdir($tempDir, 0777, true);
+        $tempDir = sys_get_temp_dir().'/lingo-builder-'.getmypid();
+        if (! is_dir($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
 
         $filePath = $tempDir.'/translations.json';
         $builder = LingoBuilder::make(['Hello' => 'Halo', 'World' => 'Dunia']);
@@ -200,7 +202,6 @@ describe('LingoBuilder chainable methods', function () {
         expect($content)->toHaveKey('Hello');
         expect($content)->toHaveKey('World');
 
-        // Cleanup
         @unlink($filePath);
         @rmdir($tempDir);
     });

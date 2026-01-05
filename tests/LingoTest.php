@@ -26,7 +26,7 @@ describe('Lingo static methods', function () {
         $result = Lingo::removeDuplicates($json);
 
         expect($result)->toHaveCount(2);
-        expect($result['key1'])->toBe('second'); // PHP keeps last occurrence
+        expect($result['key1'])->toBe('second');
     });
 
     it('can sort translations by keys ascending', function () {
@@ -54,8 +54,8 @@ describe('Lingo static methods', function () {
     it('can find untranslated items', function () {
         $translations = [
             'Hello' => 'Halo',
-            'World' => 'World', // untranslated
-            'Goodbye' => 'Goodbye', // untranslated
+            'World' => 'World',
+            'Goodbye' => 'Goodbye',
         ];
 
         $untranslated = Lingo::untranslated($translations);
@@ -69,7 +69,7 @@ describe('Lingo static methods', function () {
         $translations = [
             'Hello' => 'Halo',
             'World' => 'Dunia',
-            'Goodbye' => 'Goodbye', // untranslated
+            'Goodbye' => 'Goodbye',
         ];
 
         $translated = Lingo::translated($translations);
@@ -83,7 +83,7 @@ describe('Lingo static methods', function () {
         $translations = [
             'Hello' => 'Halo',
             'World' => 'Dunia',
-            'Goodbye' => 'Goodbye', // untranslated
+            'Goodbye' => 'Goodbye',
         ];
 
         $stats = Lingo::stats($translations);
@@ -105,7 +105,7 @@ describe('Lingo static methods', function () {
         $cleaned = Lingo::clean($translations);
 
         expect($cleaned)->toHaveCount(3);
-        expect(array_key_first($cleaned))->toBe('a'); // Sorted
+        expect(array_key_first($cleaned))->toBe('a');
     });
 
     it('can export to JSON', function () {
@@ -154,7 +154,7 @@ describe('Lingo static methods', function () {
         $result = Lingo::addMissing($translations, $keys);
 
         expect($result)->toHaveCount(2);
-        expect($result['Goodbye'])->toBe('Goodbye'); // Key as value
+        expect($result['Goodbye'])->toBe('Goodbye');
     });
 
     it('can find unused translation keys', function () {
@@ -179,8 +179,10 @@ describe('Lingo static methods', function () {
     });
 
     it('can save and load translation files', function () {
-        $tempDir = sys_get_temp_dir().'/lingo-test-'.uniqid();
-        @mkdir($tempDir, 0777, true);
+        $tempDir = sys_get_temp_dir().'/lingo-test-'.getmypid();
+        if (! is_dir($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
 
         $filePath = $tempDir.'/test.json';
         $translations = ['Hello' => 'Halo', 'World' => 'Dunia'];
@@ -193,7 +195,6 @@ describe('Lingo static methods', function () {
         expect($loaded)->not->toBeNull();
         expect($loaded['translations'])->toBe(Lingo::sortKeys($translations));
 
-        // Cleanup
         @unlink($filePath);
         @rmdir($tempDir);
     });
@@ -205,10 +206,11 @@ describe('Lingo static methods', function () {
     });
 
     it('can scan directory for translation keys', function () {
-        $tempDir = sys_get_temp_dir().'/lingo-scan-test-'.uniqid();
-        @mkdir($tempDir, 0777, true);
+        $tempDir = sys_get_temp_dir().'/lingo-scan-'.getmypid();
+        if (! is_dir($tempDir)) {
+            mkdir($tempDir, 0777, true);
+        }
 
-        // Create a test PHP file
         $phpContent = "<?php echo __('Test Key'); echo trans('Another Key');";
         file_put_contents($tempDir.'/test.php', $phpContent);
 
@@ -217,7 +219,6 @@ describe('Lingo static methods', function () {
         expect($keys)->toContain('Test Key');
         expect($keys)->toContain('Another Key');
 
-        // Cleanup
         @unlink($tempDir.'/test.php');
         @rmdir($tempDir);
     });
