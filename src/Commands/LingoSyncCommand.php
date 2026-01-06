@@ -53,6 +53,11 @@ class LingoSyncCommand extends Command
 
         $this->newLine();
         $this->components->info("Syncing: {$data['file']}");
+
+        // Show all paths being scanned
+        foreach ($paths as $path) {
+            $this->components->info("Scanning: {$path}");
+        }
         $this->newLine();
 
         // Scan all paths for translation keys
@@ -63,7 +68,6 @@ class LingoSyncCommand extends Command
 
                 continue;
             }
-            $this->components->twoColumnDetail('Scanning', $path);
             $pathKeys = Lingo::scanDirectory($path);
             $foundKeys = array_merge($foundKeys, $pathKeys);
         }
