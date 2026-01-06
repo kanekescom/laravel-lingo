@@ -70,12 +70,13 @@ php artisan lingo:stats id --detailed     # With samples
 php artisan lingo:sort                    # Uses app locale
 php artisan lingo:sort id --desc          # Z-A order
 
-# Sync with source files
-php artisan lingo:sync                    # Uses app locale, scan views
-php artisan lingo:sync id --path=app      # Custom path
-php artisan lingo:sync id --add           # Only add missing keys
-php artisan lingo:sync id --remove        # Only remove unused keys
-php artisan lingo:sync id --dry-run       # Preview changes
+# Sync with source files (find __(), trans(), @lang() calls)
+php artisan lingo:sync                              # Scan resources/views
+php artisan lingo:sync id --path=resources/views    # Scan views directory
+php artisan lingo:sync id --path=app/Filament       # Scan Filament resources
+php artisan lingo:sync id --add                     # Only add missing keys
+php artisan lingo:sync id --remove                  # Only remove unused keys
+php artisan lingo:sync id --dry-run                 # Preview changes
 ```
 
 ### Available Methods
