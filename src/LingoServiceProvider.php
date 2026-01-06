@@ -3,6 +3,7 @@
 namespace Kanekescom\Lingo;
 
 use Kanekescom\Lingo\Commands\LingoCheckCommand;
+use Kanekescom\Lingo\Commands\LingoCleanCommand;
 use Kanekescom\Lingo\Commands\LingoSortCommand;
 use Kanekescom\Lingo\Commands\LingoStatsCommand;
 use Kanekescom\Lingo\Commands\LingoSyncCommand;
@@ -22,9 +23,10 @@ class LingoServiceProvider extends PackageServiceProvider
             ->name('laravel-lingo')
             ->hasCommands([
                 LingoCheckCommand::class,
-                LingoSyncCommand::class,
+                LingoCleanCommand::class,
                 LingoSortCommand::class,
                 LingoStatsCommand::class,
+                LingoSyncCommand::class,
             ]);
     }
 }

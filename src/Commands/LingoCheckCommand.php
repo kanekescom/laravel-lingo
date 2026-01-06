@@ -19,8 +19,7 @@ class LingoCheckCommand extends Command
      * @var string
      */
     public $signature = 'lingo:check
-                        {locale? : Locale code (e.g., id, en) or full path to JSON file. Defaults to config(app.locale)}
-                        {--fix : Automatically fix issues (remove duplicates)}';
+                        {locale? : Locale code (e.g., id, en) or full path to JSON file. Defaults to config(app.locale)}';
 
     /**
      * The console command description.
@@ -47,7 +46,7 @@ class LingoCheckCommand extends Command
         $hasIssues = false;
 
         // Check duplicates
-        $hasIssues = $this->checkDuplicates($data['file'], $data['content']) || $hasIssues;
+        $hasIssues = $this->checkDuplicates($data['content']) || $hasIssues;
 
         // Check untranslated
         $hasIssues = $this->checkUntranslated($data['translations']) || $hasIssues;
@@ -63,7 +62,7 @@ class LingoCheckCommand extends Command
     /**
      * Check for duplicate keys.
      */
-    protected function checkDuplicates(string $file, string $jsonContent): bool
+    protected function checkDuplicates(string $jsonContent): bool
     {
         $duplicates = Lingo::duplicates($jsonContent);
 
@@ -79,16 +78,7 @@ class LingoCheckCommand extends Command
             $this->components->bulletList(["<fg=red>{$key}</> (appears {$count} times)"]);
         }
 
-        if ($this->option('fix')) {
-            $translations = Lingo::removeDuplicates($jsonContent);
-            Lingo::save($file, $translations, false);
-
-            $this->newLine();
-            $this->components->info('✓ Removed '.count($duplicates).' duplicate key(s)');
-        } else {
-            $this->line('<fg=gray>Tip: Use --fix to remove duplicates</>');
-        }
-
+        $this->line('<fg=gray>Tip: Use lingo:clean to fix issues</>');
         $this->newLine();
 
         return true;

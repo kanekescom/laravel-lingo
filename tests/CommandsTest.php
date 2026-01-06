@@ -50,18 +50,6 @@ describe('LingoCheckCommand', function () {
             ->assertFailed();
     });
 
-    it('can fix duplicates with --fix option', function () {
-        $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
-        // Create file with duplicate keys (simulated - PHP will keep last)
-        file_put_contents($filePath, '{"key1": "value1", "key2": "value2", "key1": "duplicate"}');
-
-        $this->artisan('lingo:check', ['locale' => $filePath, '--fix' => true])
-            ->assertSuccessful();
-
-        cleanupTempDir($tempDir);
-    });
-
     it('reports error for invalid JSON file', function () {
         $tempDir = createTempTestDir();
         $filePath = $tempDir.'/invalid.json';
@@ -88,6 +76,80 @@ describe('LingoCheckCommand', function () {
 
         $this->artisan('lingo:check')
             ->assertSuccessful();
+
+        @unlink($filePath);
+    });
+});
+
+describe('LingoCleanCommand', function () {
+    it('can clean translation file', function () {
+        $tempDir = createTempTestDir();
+        $filePath = $tempDir.'/test.json';
+        file_put_contents($filePath, json_encode([
+            'z' => 'last',
+            'a' => 'first',
+            'empty' => '',
+        ], JSON_PRETTY_PRINT));
+
+        $this->artisan('lingo:clean', ['locale' => $filePath])
+            ->assertSuccessful();
+
+        $cleaned = json_decode(file_get_contents($filePath), true);
+        expect(array_keys($cleaned)[0])->toBe('a'); // Sorted
+        expect($cleaned)->not->toHaveKey('empty'); // Empty removed
+
+        cleanupTempDir($tempDir);
+    });
+
+    it('removes duplicates from file', function () {
+        $tempDir = createTempTestDir();
+        $filePath = $tempDir.'/test.json';
+        // Create file with duplicate keys
+        file_put_contents($filePath, '{"key1": "first", "key2": "value", "key1": "duplicate"}');
+
+        $this->artisan('lingo:clean', ['locale' => $filePath])
+            ->assertSuccessful();
+
+        $cleaned = json_decode(file_get_contents($filePath), true);
+        expect($cleaned)->toHaveCount(2);
+        expect($cleaned['key1'])->toBe('duplicate'); // PHP keeps last
+
+        cleanupTempDir($tempDir);
+    });
+
+    it('can keep empty values with --keep-empty', function () {
+        $tempDir = createTempTestDir();
+        $filePath = $tempDir.'/test.json';
+        file_put_contents($filePath, json_encode([
+            'filled' => 'value',
+            'empty' => '',
+        ], JSON_PRETTY_PRINT));
+
+        $this->artisan('lingo:clean', ['locale' => $filePath, '--keep-empty' => true])
+            ->assertSuccessful();
+
+        $cleaned = json_decode(file_get_contents($filePath), true);
+        expect($cleaned)->toHaveKey('empty');
+
+        cleanupTempDir($tempDir);
+    });
+
+    it('uses app locale when locale argument is omitted', function () {
+        config(['app.locale' => 'clean-test']);
+
+        $langDir = lang_path();
+        if (! is_dir($langDir)) {
+            mkdir($langDir, 0777, true);
+        }
+
+        $filePath = lang_path('clean-test.json');
+        file_put_contents($filePath, json_encode(['z' => 'last', 'a' => 'first'], JSON_PRETTY_PRINT));
+
+        $this->artisan('lingo:clean')
+            ->assertSuccessful();
+
+        $cleaned = json_decode(file_get_contents($filePath), true);
+        expect(array_keys($cleaned)[0])->toBe('a');
 
         @unlink($filePath);
     });

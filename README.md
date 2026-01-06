@@ -56,7 +56,11 @@ All commands accept an optional `locale` argument. If omitted, defaults to `conf
 # Check for issues (duplicates, untranslated)
 php artisan lingo:check                   # Uses app locale
 php artisan lingo:check id                # Specify locale
-php artisan lingo:check id --fix          # Auto-fix duplicates
+
+# Clean translation file (remove duplicates, empty, sort)
+php artisan lingo:clean                   # Uses app locale
+php artisan lingo:clean id                # Specify locale
+php artisan lingo:clean id --keep-empty   # Keep empty values
 
 # Show translation statistics
 php artisan lingo:stats                   # Uses app locale
