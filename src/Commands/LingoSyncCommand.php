@@ -20,7 +20,7 @@ class LingoSyncCommand extends Command
      */
     public $signature = 'lingo:sync
                         {locale? : Locale code (e.g., id, en) or full path to JSON file. Defaults to config(app.locale)}
-                        {--path=resources/views : Directory to scan for translation keys}
+                        {--path=* : Directories to scan for translation keys (can be used multiple times)}
                         {--add : Add missing keys to translation file}
                         {--remove : Remove unused keys from translation file}
                         {--dry-run : Show what would be changed without saving}';
@@ -43,21 +43,35 @@ class LingoSyncCommand extends Command
             return self::FAILURE;
         }
 
-        $scanPath = $this->resolveScanPath($this->option('path'));
+        $paths = $this->resolveScanPaths($this->option('path'));
 
-        if (! is_dir($scanPath)) {
-            $this->error("Directory not found: {$scanPath}");
+        if (empty($paths)) {
+            $this->error('No valid directories found to scan.');
 
             return self::FAILURE;
         }
 
         $this->newLine();
         $this->components->info("Syncing: {$data['file']}");
-        $this->components->info("Scanning: {$scanPath}");
         $this->newLine();
 
-        // Scan for translation keys
-        $foundKeys = Lingo::scanDirectory($scanPath);
+        // Scan all paths for translation keys
+        $foundKeys = [];
+        foreach ($paths as $path) {
+            if (! is_dir($path)) {
+                $this->components->warn("Directory not found: {$path}");
+
+                continue;
+            }
+            $this->components->twoColumnDetail('Scanning', $path);
+            $pathKeys = Lingo::scanDirectory($path);
+            $foundKeys = array_merge($foundKeys, $pathKeys);
+        }
+
+        // Remove duplicates
+        $foundKeys = array_unique($foundKeys);
+        $this->newLine();
+
         $missing = Lingo::missing($data['translations'], $foundKeys);
         $unused = Lingo::unused($data['translations'], $foundKeys);
 
@@ -123,15 +137,28 @@ class LingoSyncCommand extends Command
     }
 
     /**
-     * Resolve scan path.
+     * Resolve scan paths.
+     *
+     * @param  array<string>  $paths
+     * @return array<string>
      */
-    protected function resolveScanPath(string $path): string
+    protected function resolveScanPaths(array $paths): array
     {
-        if (str_starts_with($path, '/') || preg_match('/^[A-Z]:/i', $path)) {
-            return $path;
+        // Default to resources/views if no paths specified
+        if (empty($paths)) {
+            $paths = ['resources/views'];
         }
 
-        return base_path($path);
+        $resolved = [];
+        foreach ($paths as $path) {
+            if (str_starts_with($path, '/') || preg_match('/^[A-Z]:/i', $path)) {
+                $resolved[] = $path;
+            } else {
+                $resolved[] = base_path($path);
+            }
+        }
+
+        return $resolved;
     }
 
     /**

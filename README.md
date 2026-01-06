@@ -31,8 +31,11 @@ use Kanekescom\Lingo\Facades\Lingo;
 // Load by locale and manipulate
 Lingo::locale('id')->sortKeys()->save();
 Lingo::locale('id')->clean()->save();
-Lingo::locale('id')->sync()->save();                              // Sync with views
-Lingo::locale('id')->sync(['resources/views', 'app'])->save();    // Sync multiple folders
+
+// Sync with source files
+Lingo::locale('id')->sync()->save();                                    // Default: resources/views
+Lingo::locale('id')->sync('app/Filament')->save();                      // Single path
+Lingo::locale('id')->sync(['resources/views', 'app/Filament'])->save(); // Multiple paths
 
 // Get data
 $stats = Lingo::locale('id')->stats();
@@ -40,6 +43,9 @@ $untranslated = Lingo::locale('id')->onlyUntranslated()->get();
 
 // Create from array (overwrites file)
 lingo(['Hello' => 'Halo'], 'id')->save();
+
+// Using helper with sync (cleaner syntax)
+lingo()->sync(['resources/views', 'app/Filament'])->to('id')->save();
 
 // Merge with existing translations
 Lingo::locale('id')->merge(['Hello' => 'Halo'])->save();
@@ -71,9 +77,9 @@ php artisan lingo:sort                    # Uses app locale
 php artisan lingo:sort id --desc          # Z-A order
 
 # Sync with source files (find __(), trans(), @lang() calls)
-php artisan lingo:sync                              # Scan resources/views
-php artisan lingo:sync id --path=resources/views    # Scan views directory
-php artisan lingo:sync id --path=app/Filament       # Scan Filament resources
+php artisan lingo:sync                              # Scan resources/views (default)
+php artisan lingo:sync id --path=resources/views    # Single path
+php artisan lingo:sync id --path=resources/views --path=app/Filament  # Multiple paths
 php artisan lingo:sync id --add                     # Only add missing keys
 php artisan lingo:sync id --remove                  # Only remove unused keys
 php artisan lingo:sync id --dry-run                 # Preview changes
@@ -95,7 +101,7 @@ php artisan lingo:sync id --dry-run                 # Preview changes
 | Method | Description |
 |--------|-------------|
 | `to($locale)` | Set target locale for save() |
-| `sync($paths)` | Sync with source files (default: views) |
+| `sync($paths)` | Sync with source files (accepts string, array, or null for default views) |
 | `sortKeys($asc)` | Sort keys alphabetically (default: A-Z) |
 | `clean()` | Remove empty values and sort keys |
 | `merge($arr)` | Merge with another array |

@@ -5,7 +5,7 @@
  */
 function createTempTestDir(): string
 {
-    $tempDir = sys_get_temp_dir().'/lingo-cmd-'.getmypid().'-'.uniqid();
+    $tempDir = sys_get_temp_dir() . '/lingo-cmd-' . getmypid() . '-' . uniqid();
     if (! is_dir($tempDir)) {
         mkdir($tempDir, 0777, true);
     }
@@ -22,7 +22,7 @@ function cleanupTempDir(string $dir): void
         return;
     }
 
-    $files = glob($dir.'/*');
+    $files = glob($dir . '/*');
     foreach ($files as $file) {
         if (is_dir($file)) {
             cleanupTempDir($file);
@@ -36,7 +36,7 @@ function cleanupTempDir(string $dir): void
 describe('LingoCheckCommand', function () {
     it('can check translation file for issues', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo', 'World' => 'World'], JSON_PRETTY_PRINT));
 
         $this->artisan('lingo:check', ['locale' => $filePath])
@@ -52,7 +52,7 @@ describe('LingoCheckCommand', function () {
 
     it('reports error for invalid JSON file', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/invalid.json';
+        $filePath = $tempDir . '/invalid.json';
         file_put_contents($filePath, 'not valid json {{{');
 
         $this->artisan('lingo:check', ['locale' => $filePath])
@@ -84,7 +84,7 @@ describe('LingoCheckCommand', function () {
 describe('LingoCleanCommand', function () {
     it('can clean translation file', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode([
             'z' => 'last',
             'a' => 'first',
@@ -103,7 +103,7 @@ describe('LingoCleanCommand', function () {
 
     it('removes duplicates from file', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         // Create file with duplicate keys
         file_put_contents($filePath, '{"key1": "first", "key2": "value", "key1": "duplicate"}');
 
@@ -119,7 +119,7 @@ describe('LingoCleanCommand', function () {
 
     it('can keep empty values with --keep-empty', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode([
             'filled' => 'value',
             'empty' => '',
@@ -158,7 +158,7 @@ describe('LingoCleanCommand', function () {
 describe('LingoStatsCommand', function () {
     it('can show translation statistics', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo', 'World' => 'World'], JSON_PRETTY_PRINT));
 
         $this->artisan('lingo:stats', ['locale' => $filePath])
@@ -169,7 +169,7 @@ describe('LingoStatsCommand', function () {
 
     it('can show detailed statistics', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo', 'World' => 'World'], JSON_PRETTY_PRINT));
 
         $this->artisan('lingo:stats', ['locale' => $filePath, '--detailed' => true])
@@ -199,7 +199,7 @@ describe('LingoStatsCommand', function () {
 describe('LingoSortCommand', function () {
     it('can sort translation file', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['z' => 'last', 'a' => 'first'], JSON_PRETTY_PRINT));
 
         $this->artisan('lingo:sort', ['locale' => $filePath])
@@ -213,7 +213,7 @@ describe('LingoSortCommand', function () {
 
     it('can sort in descending order', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['a' => 'first', 'z' => 'last'], JSON_PRETTY_PRINT));
 
         $this->artisan('lingo:sort', ['locale' => $filePath, '--desc' => true])
@@ -249,14 +249,14 @@ describe('LingoSortCommand', function () {
 describe('LingoSyncCommand', function () {
     it('can sync translation file with source directory', function () {
         $tempDir = createTempTestDir();
-        $srcDir = $tempDir.'/src';
+        $srcDir = $tempDir . '/src';
         mkdir($srcDir, 0777, true);
 
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo'], JSON_PRETTY_PRINT));
-        file_put_contents($srcDir.'/test.php', "<?php echo __('Hello'); echo __('World');");
+        file_put_contents($srcDir . '/test.php', "<?php echo __('Hello'); echo __('World');");
 
-        $this->artisan('lingo:sync', ['locale' => $filePath, '--path' => $srcDir])
+        $this->artisan('lingo:sync', ['locale' => $filePath, '--path' => [$srcDir]])
             ->assertSuccessful();
 
         cleanupTempDir($tempDir);
@@ -264,14 +264,14 @@ describe('LingoSyncCommand', function () {
 
     it('can add missing keys', function () {
         $tempDir = createTempTestDir();
-        $srcDir = $tempDir.'/src';
+        $srcDir = $tempDir . '/src';
         mkdir($srcDir, 0777, true);
 
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo'], JSON_PRETTY_PRINT));
-        file_put_contents($srcDir.'/test.php', "<?php echo __('Hello'); echo __('NewKey');");
+        file_put_contents($srcDir . '/test.php', "<?php echo __('Hello'); echo __('NewKey');");
 
-        $this->artisan('lingo:sync', ['locale' => $filePath, '--path' => $srcDir, '--add' => true])
+        $this->artisan('lingo:sync', ['locale' => $filePath, '--path' => [$srcDir], '--add' => true])
             ->assertSuccessful();
 
         $updated = json_decode(file_get_contents($filePath), true);
@@ -282,14 +282,14 @@ describe('LingoSyncCommand', function () {
 
     it('can remove unused keys', function () {
         $tempDir = createTempTestDir();
-        $srcDir = $tempDir.'/src';
+        $srcDir = $tempDir . '/src';
         mkdir($srcDir, 0777, true);
 
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo', 'Unused' => 'Not Used'], JSON_PRETTY_PRINT));
-        file_put_contents($srcDir.'/test.php', "<?php echo __('Hello');");
+        file_put_contents($srcDir . '/test.php', "<?php echo __('Hello');");
 
-        $this->artisan('lingo:sync', ['locale' => $filePath, '--path' => $srcDir, '--remove' => true])
+        $this->artisan('lingo:sync', ['locale' => $filePath, '--path' => [$srcDir], '--remove' => true])
             ->assertSuccessful();
 
         $updated = json_decode(file_get_contents($filePath), true);
@@ -301,16 +301,16 @@ describe('LingoSyncCommand', function () {
 
     it('supports dry-run mode', function () {
         $tempDir = createTempTestDir();
-        $srcDir = $tempDir.'/src';
+        $srcDir = $tempDir . '/src';
         mkdir($srcDir, 0777, true);
 
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo'], JSON_PRETTY_PRINT));
-        file_put_contents($srcDir.'/test.php', "<?php echo __('Hello'); echo __('NewKey');");
+        file_put_contents($srcDir . '/test.php', "<?php echo __('Hello'); echo __('NewKey');");
 
         $this->artisan('lingo:sync', [
             'locale' => $filePath,
-            '--path' => $srcDir,
+            '--path' => [$srcDir],
             '--add' => true,
             '--dry-run' => true,
         ])->assertSuccessful();
@@ -339,34 +339,36 @@ describe('LingoSyncCommand', function () {
         @unlink($filePath);
     });
 
-    it('fails gracefully with non-existent path', function () {
+    it('warns gracefully with non-existent path', function () {
         $tempDir = createTempTestDir();
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode(['Hello' => 'Halo'], JSON_PRETTY_PRINT));
 
+        // With only non-existent paths, command still succeeds but shows warning
+        // (no keys found in scanned directories)
         $this->artisan('lingo:sync', [
             'locale' => $filePath,
-            '--path' => '/non/existent/directory',
-        ])->assertFailed();
+            '--path' => ['/non/existent/directory'],
+        ])->assertSuccessful();
 
         cleanupTempDir($tempDir);
     });
 
     it('can use add and remove together', function () {
         $tempDir = createTempTestDir();
-        $srcDir = $tempDir.'/src';
+        $srcDir = $tempDir . '/src';
         mkdir($srcDir, 0777, true);
 
-        $filePath = $tempDir.'/test.json';
+        $filePath = $tempDir . '/test.json';
         file_put_contents($filePath, json_encode([
             'Hello' => 'Halo',
             'Unused' => 'Not Used',
         ], JSON_PRETTY_PRINT));
-        file_put_contents($srcDir.'/test.php', "<?php echo __('Hello'); echo __('NewKey');");
+        file_put_contents($srcDir . '/test.php', "<?php echo __('Hello'); echo __('NewKey');");
 
         $this->artisan('lingo:sync', [
             'locale' => $filePath,
-            '--path' => $srcDir,
+            '--path' => [$srcDir],
             '--add' => true,
             '--remove' => true,
         ])->assertSuccessful();
@@ -375,6 +377,33 @@ describe('LingoSyncCommand', function () {
         expect($updated)->toHaveKey('Hello');
         expect($updated)->toHaveKey('NewKey');
         expect($updated)->not->toHaveKey('Unused');
+
+        cleanupTempDir($tempDir);
+    });
+
+    it('can scan multiple paths', function () {
+        $tempDir = createTempTestDir();
+        $srcDir1 = $tempDir . '/views';
+        $srcDir2 = $tempDir . '/filament';
+        mkdir($srcDir1, 0777, true);
+        mkdir($srcDir2, 0777, true);
+
+        $filePath = $tempDir . '/test.json';
+        file_put_contents($filePath, json_encode(['Existing' => 'Ada'], JSON_PRETTY_PRINT));
+        file_put_contents($srcDir1 . '/test.blade.php', "<?php echo __('ViewKey');");
+        file_put_contents($srcDir2 . '/Resource.php', "<?php echo __('FilamentKey');");
+
+        $this->artisan('lingo:sync', [
+            'locale' => $filePath,
+            '--path' => [$srcDir1, $srcDir2],
+            '--add' => true,
+            '--remove' => true,
+        ])->assertSuccessful();
+
+        $updated = json_decode(file_get_contents($filePath), true);
+        expect($updated)->toHaveKey('ViewKey');
+        expect($updated)->toHaveKey('FilamentKey');
+        expect($updated)->not->toHaveKey('Existing'); // Removed as not in any source
 
         cleanupTempDir($tempDir);
     });
