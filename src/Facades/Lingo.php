@@ -33,6 +33,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasUnused(array $translations, array $usedKeys)
  * @method static array removeUnused(array $translations, array $usedKeys)
  * @method static bool save(string $path, array $translations, bool $sort = true)
+ * @method static string resolvePath(string $path)
+ * @method static array scan(string $path, array $extensions = ['php'])
  * @method static array scanDirectory(string $path, array $extensions = ['php', 'blade.php'])
  *
  * @see \Kanekescom\Lingo\Lingo

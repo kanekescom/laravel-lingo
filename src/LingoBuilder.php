@@ -171,13 +171,16 @@ class LingoBuilder
      * Scans for translation keys in source files, adds missing keys,
      * and removes unused keys in one step.
      *
-     * @param  string|array<string>|null  $paths  Directory or directories to scan (default: resource_path('views'))
+     * Paths are resolved relative to base_path() and support both files and directories.
+     *
+     * @param  string|array<string>|null  $paths  File or directory paths relative to application root (default: resource_path('views'))
      * @return $this
      *
      * @example
-     * Lingo::locale('id')->sync()->save();                        // Sync with views
-     * Lingo::locale('id')->sync('app/Filament')->save();          // Sync with one folder
-     * Lingo::locale('id')->sync(['resources/views', 'app'])->save(); // Sync with multiple
+     * Lingo::locale('id')->sync()->save();                                     // Sync with views
+     * Lingo::locale('id')->sync('app/Filament')->save();                       // Sync with one folder
+     * Lingo::locale('id')->sync(['resources/views', 'app/Filament'])->save();  // Sync with multiple
+     * Lingo::locale('id')->sync('app/Http/Controllers/Home.php')->save();      // Sync with single file
      */
     public function sync(string|array|null $paths = null): static
     {
@@ -194,7 +197,8 @@ class LingoBuilder
         // Collect all keys from all paths
         $allKeys = [];
         foreach ($paths as $path) {
-            $keys = Lingo::scanDirectory($path);
+            // Use scan() which handles path resolution and supports files/directories
+            $keys = Lingo::scan($path);
             $allKeys = array_merge($allKeys, $keys);
         }
         $allKeys = array_unique($allKeys);
@@ -214,7 +218,7 @@ class LingoBuilder
     {
         $this->translations = array_filter(
             $this->translations,
-            fn ($value) => $value !== ''
+            fn($value) => $value !== ''
         );
 
         return $this;
@@ -298,7 +302,7 @@ class LingoBuilder
 
         // Fallback to app's current locale
         if ($path === null) {
-            $path = lang_path(app()->getLocale().'.json');
+            $path = lang_path(app()->getLocale() . '.json');
         }
 
         return Lingo::save($path, $this->translations, $sort);

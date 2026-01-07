@@ -20,7 +20,7 @@ class LingoSyncCommand extends Command
      */
     public $signature = 'lingo:sync
                         {locale? : Locale code (e.g., id, en) or full path to JSON file. Defaults to config(app.locale)}
-                        {--path=* : Directories to scan for translation keys (can be used multiple times)}
+                        {--path=* : Paths (files or directories) to scan for translation keys (can be used multiple times)}
                         {--add : Add missing keys to translation file}
                         {--remove : Remove unused keys from translation file}
                         {--dry-run : Show what would be changed without saving}';
@@ -46,7 +46,7 @@ class LingoSyncCommand extends Command
         $paths = $this->resolveScanPaths($this->option('path'));
 
         if (empty($paths)) {
-            $this->error('No valid directories found to scan.');
+            $this->error('No valid paths found to scan.');
 
             return self::FAILURE;
         }
@@ -60,15 +60,18 @@ class LingoSyncCommand extends Command
         }
         $this->newLine();
 
-        // Scan all paths for translation keys
+        // Scan all paths for translation keys (supports files and directories)
         $foundKeys = [];
         foreach ($paths as $path) {
-            if (! is_dir($path)) {
-                $this->components->warn("Directory not found: {$path}");
+            $resolvedPath = Lingo::resolvePath($path);
+
+            if (! is_dir($resolvedPath) && ! is_file($resolvedPath)) {
+                $this->components->warn("Path not found: {$path}");
 
                 continue;
             }
-            $pathKeys = Lingo::scanDirectory($path);
+
+            $pathKeys = Lingo::scan($path);
             $foundKeys = array_merge($foundKeys, $pathKeys);
         }
 
@@ -82,8 +85,8 @@ class LingoSyncCommand extends Command
         // Show summary
         $this->components->twoColumnDetail('Keys found in source', (string) count($foundKeys));
         $this->components->twoColumnDetail('Keys in translation file', (string) count($data['translations']));
-        $this->components->twoColumnDetail('Missing keys', '<fg=yellow>'.count($missing).'</>');
-        $this->components->twoColumnDetail('Unused keys', '<fg=cyan>'.count($unused).'</>');
+        $this->components->twoColumnDetail('Missing keys', '<fg=yellow>' . count($missing) . '</>');
+        $this->components->twoColumnDetail('Unused keys', '<fg=cyan>' . count($unused) . '</>');
         $this->newLine();
 
         if (empty($missing) && empty($unused)) {
@@ -102,10 +105,10 @@ class LingoSyncCommand extends Command
 
             if ($this->option('add') && ! $isDryRun) {
                 $translations = Lingo::addMissing($translations, $foundKeys);
-                $this->components->info('✓ Added '.count($missing).' missing key(s)');
+                $this->components->info('✓ Added ' . count($missing) . ' missing key(s)');
                 $this->newLine();
             } elseif ($this->option('add') && $isDryRun) {
-                $this->line('<fg=gray>[dry-run] Would add '.count($missing).' key(s)</>');
+                $this->line('<fg=gray>[dry-run] Would add ' . count($missing) . ' key(s)</>');
                 $this->newLine();
             } else {
                 $this->line('<fg=gray>Tip: Use --add to add missing keys</>');
@@ -119,10 +122,10 @@ class LingoSyncCommand extends Command
 
             if ($this->option('remove') && ! $isDryRun) {
                 $translations = Lingo::removeUnused($translations, $foundKeys);
-                $this->components->info('✓ Removed '.count($unused).' unused key(s)');
+                $this->components->info('✓ Removed ' . count($unused) . ' unused key(s)');
                 $this->newLine();
             } elseif ($this->option('remove') && $isDryRun) {
-                $this->line('<fg=gray>[dry-run] Would remove '.count($unused).' key(s)</>');
+                $this->line('<fg=gray>[dry-run] Would remove ' . count($unused) . ' key(s)</>');
                 $this->newLine();
             } else {
                 $this->line('<fg=gray>Tip: Use --remove to remove unused keys</>');
@@ -143,6 +146,9 @@ class LingoSyncCommand extends Command
     /**
      * Resolve scan paths.
      *
+     * All paths are relative to the application root.
+     * Absolute paths are not supported to ensure scanning is restricted to the application.
+     *
      * @param  array<string>  $paths
      * @return array<string>
      */
@@ -153,16 +159,8 @@ class LingoSyncCommand extends Command
             $paths = ['resources/views'];
         }
 
-        $resolved = [];
-        foreach ($paths as $path) {
-            if (str_starts_with($path, '/') || preg_match('/^[A-Z]:/i', $path)) {
-                $resolved[] = $path;
-            } else {
-                $resolved[] = base_path($path);
-            }
-        }
-
-        return $resolved;
+        // Return paths as-is, Lingo::scan() will handle resolution
+        return $paths;
     }
 
     /**
@@ -174,11 +172,11 @@ class LingoSyncCommand extends Command
         $shown = array_slice($missing, 0, 15);
 
         foreach ($shown as $key) {
-            $this->line('  <fg=yellow>•</> '.$this->truncate($key));
+            $this->line('  <fg=yellow>•</> ' . $this->truncate($key));
         }
 
         if (count($missing) > 15) {
-            $this->line('  <fg=gray>... and '.(count($missing) - 15).' more</>');
+            $this->line('  <fg=gray>... and ' . (count($missing) - 15) . ' more</>');
         }
 
         $this->newLine();
@@ -193,11 +191,11 @@ class LingoSyncCommand extends Command
         $shown = array_slice($unused, 0, 15);
 
         foreach ($shown as $key) {
-            $this->line('  <fg=cyan>•</> '.$this->truncate($key));
+            $this->line('  <fg=cyan>•</> ' . $this->truncate($key));
         }
 
         if (count($unused) > 15) {
-            $this->line('  <fg=gray>... and '.(count($unused) - 15).' more</>');
+            $this->line('  <fg=gray>... and ' . (count($unused) - 15) . ' more</>');
         }
 
         $this->newLine();

@@ -34,8 +34,9 @@ Lingo::locale('id')->clean()->save();
 
 // Sync with source files
 Lingo::locale('id')->sync()->save();                                    // Default: resources/views
-Lingo::locale('id')->sync('app/Filament')->save();                      // Single path
+Lingo::locale('id')->sync('app/Filament')->save();                      // Single folder
 Lingo::locale('id')->sync(['resources/views', 'app/Filament'])->save(); // Multiple paths
+Lingo::locale('id')->sync('app/Http/Controllers/HomeController.php')->save(); // Single file
 
 // Get data
 $stats = Lingo::locale('id')->stats();
@@ -80,10 +81,13 @@ php artisan lingo:sort id --desc          # Z-A order
 php artisan lingo:sync                              # Scan resources/views (default)
 php artisan lingo:sync id --path=resources/views    # Single path
 php artisan lingo:sync id --path=resources/views --path=app/Filament  # Multiple paths
+php artisan lingo:sync id --path=app/Http/Controllers/HomeController.php  # Single file
 php artisan lingo:sync id --add                     # Only add missing keys
 php artisan lingo:sync id --remove                  # Only remove unused keys
 php artisan lingo:sync id --dry-run                 # Preview changes
 ```
+
+> **Note:** All paths are relative to your application root. Both files and directories are supported.
 
 ### Available Methods
 
@@ -101,7 +105,7 @@ php artisan lingo:sync id --dry-run                 # Preview changes
 | Method | Description |
 |--------|-------------|
 | `to($locale)` | Set target locale for save() |
-| `sync($paths)` | Sync with source files (accepts string, array, or null for default views) |
+| `sync($paths)` | Sync with source files (accepts string, array, or null for default views). Supports files and directories. |
 | `sortKeys($asc)` | Sort keys alphabetically (default: A-Z) |
 | `clean()` | Remove empty values and sort keys |
 | `merge($arr)` | Merge with another array |

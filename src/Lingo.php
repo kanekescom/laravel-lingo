@@ -74,7 +74,7 @@ class Lingo
         $keys = $matches[1];
         $counts = array_count_values($keys);
 
-        return array_filter($counts, fn ($count) => $count > 1);
+        return array_filter($counts, fn($count) => $count > 1);
     }
 
     /**
@@ -165,7 +165,7 @@ class Lingo
      */
     public static function untranslated(array $translations): array
     {
-        return array_filter($translations, fn ($value, $key) => $key === $value, ARRAY_FILTER_USE_BOTH);
+        return array_filter($translations, fn($value, $key) => $key === $value, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
@@ -186,7 +186,7 @@ class Lingo
      */
     public static function translated(array $translations): array
     {
-        return array_filter($translations, fn ($value, $key) => $key !== $value, ARRAY_FILTER_USE_BOTH);
+        return array_filter($translations, fn($value, $key) => $key !== $value, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
@@ -220,7 +220,7 @@ class Lingo
     public static function clean(array $translations): array
     {
         // Remove empty values
-        $cleaned = array_filter($translations, fn ($value) => $value !== '');
+        $cleaned = array_filter($translations, fn($value) => $value !== '');
 
         // Sort keys
         return static::sortKeys($cleaned);
@@ -240,6 +240,65 @@ class Lingo
         }
 
         return json_encode($translations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Resolve path to absolute path within the application.
+     *
+     * Paths are resolved relative to base_path(). If the path is already
+     * absolute and exists, it will be used directly (for backward compatibility).
+     *
+     * @param  string  $path  Path relative to application root (or absolute path)
+     * @return string Absolute path
+     */
+    public static function resolvePath(string $path): string
+    {
+        // Check if path is already absolute (Unix or Windows)
+        $isAbsolute = str_starts_with($path, '/') || preg_match('/^[A-Za-z]:/', $path);
+
+        if ($isAbsolute) {
+            // If absolute path exists, use it directly (backward compatibility)
+            if (is_file($path) || is_dir($path)) {
+                return $path;
+            }
+        }
+
+        // Resolve using base_path for relative paths
+        return base_path($path);
+    }
+
+    /**
+     * Scan path for translation keys.
+     *
+     * Supports both files and directories. For directories, scans recursively.
+     * Paths are always resolved relative to base_path() for security.
+     *
+     * @param  string  $path  Path to file or directory (relative to application root)
+     * @param  array<string>  $extensions  File extensions to scan (default: ['php'])
+     * @return array<string> Array of unique translation keys found
+     *
+     * @example
+     * Lingo::scan('app/Filament');                    // Scan directory
+     * Lingo::scan('app/Http/Controllers/Home.php');   // Scan single file
+     * Lingo::scan('resources/views');                 // Scan views directory
+     */
+    public static function scan(string $path, array $extensions = ['php']): array
+    {
+        $resolvedPath = static::resolvePath($path);
+
+        // Handle single file
+        if (is_file($resolvedPath)) {
+            $content = file_get_contents($resolvedPath);
+
+            return static::extractKeys($content);
+        }
+
+        // Handle directory
+        if (is_dir($resolvedPath)) {
+            return static::scanDirectory($resolvedPath, $extensions);
+        }
+
+        return [];
     }
 
     /**
@@ -271,7 +330,7 @@ class Lingo
             $matchesExtension = false;
 
             foreach ($extensions as $ext) {
-                if (str_ends_with($filename, '.'.$ext)) {
+                if (str_ends_with($filename, '.' . $ext)) {
                     $matchesExtension = true;
                     break;
                 }
@@ -335,7 +394,7 @@ class Lingo
      */
     public static function missing(array $translations, array $keys): array
     {
-        return array_values(array_filter($keys, fn ($key) => ! array_key_exists($key, $translations)));
+        return array_values(array_filter($keys, fn($key) => ! array_key_exists($key, $translations)));
     }
 
     /**
@@ -385,7 +444,7 @@ class Lingo
 
         return array_values(array_filter(
             $translationKeys,
-            fn ($key) => ! isset($usedKeysFlipped[$key])
+            fn($key) => ! isset($usedKeysFlipped[$key])
         ));
     }
 
@@ -413,7 +472,7 @@ class Lingo
 
         return array_filter(
             $translations,
-            fn ($value, $key) => isset($usedKeysFlipped[$key]),
+            fn($value, $key) => isset($usedKeysFlipped[$key]),
             ARRAY_FILTER_USE_BOTH
         );
     }
