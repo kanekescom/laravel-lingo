@@ -85,8 +85,8 @@ class LingoSyncCommand extends Command
         // Show summary
         $this->components->twoColumnDetail('Keys found in source', (string) count($foundKeys));
         $this->components->twoColumnDetail('Keys in translation file', (string) count($data['translations']));
-        $this->components->twoColumnDetail('Missing keys', '<fg=yellow>' . count($missing) . '</>');
-        $this->components->twoColumnDetail('Unused keys', '<fg=cyan>' . count($unused) . '</>');
+        $this->components->twoColumnDetail('Missing keys', '<fg=yellow>'.count($missing).'</>');
+        $this->components->twoColumnDetail('Unused keys', '<fg=cyan>'.count($unused).'</>');
         $this->newLine();
 
         if (empty($missing) && empty($unused)) {
@@ -105,10 +105,10 @@ class LingoSyncCommand extends Command
 
             if ($this->option('add') && ! $isDryRun) {
                 $translations = Lingo::addMissing($translations, $foundKeys);
-                $this->components->info('✓ Added ' . count($missing) . ' missing key(s)');
+                $this->components->info('✓ Added '.count($missing).' missing key(s)');
                 $this->newLine();
             } elseif ($this->option('add') && $isDryRun) {
-                $this->line('<fg=gray>[dry-run] Would add ' . count($missing) . ' key(s)</>');
+                $this->line('<fg=gray>[dry-run] Would add '.count($missing).' key(s)</>');
                 $this->newLine();
             } else {
                 $this->line('<fg=gray>Tip: Use --add to add missing keys</>');
@@ -122,10 +122,10 @@ class LingoSyncCommand extends Command
 
             if ($this->option('remove') && ! $isDryRun) {
                 $translations = Lingo::removeUnused($translations, $foundKeys);
-                $this->components->info('✓ Removed ' . count($unused) . ' unused key(s)');
+                $this->components->info('✓ Removed '.count($unused).' unused key(s)');
                 $this->newLine();
             } elseif ($this->option('remove') && $isDryRun) {
-                $this->line('<fg=gray>[dry-run] Would remove ' . count($unused) . ' key(s)</>');
+                $this->line('<fg=gray>[dry-run] Would remove '.count($unused).' key(s)</>');
                 $this->newLine();
             } else {
                 $this->line('<fg=gray>Tip: Use --remove to remove unused keys</>');
@@ -172,11 +172,11 @@ class LingoSyncCommand extends Command
         $shown = array_slice($missing, 0, 15);
 
         foreach ($shown as $key) {
-            $this->line('  <fg=yellow>•</> ' . $this->truncate($key));
+            $this->line('  <fg=yellow>•</> '.$this->truncate($key));
         }
 
         if (count($missing) > 15) {
-            $this->line('  <fg=gray>... and ' . (count($missing) - 15) . ' more</>');
+            $this->line('  <fg=gray>... and '.(count($missing) - 15).' more</>');
         }
 
         $this->newLine();
@@ -191,11 +191,11 @@ class LingoSyncCommand extends Command
         $shown = array_slice($unused, 0, 15);
 
         foreach ($shown as $key) {
-            $this->line('  <fg=cyan>•</> ' . $this->truncate($key));
+            $this->line('  <fg=cyan>•</> '.$this->truncate($key));
         }
 
         if (count($unused) > 15) {
-            $this->line('  <fg=gray>... and ' . (count($unused) - 15) . ' more</>');
+            $this->line('  <fg=gray>... and '.(count($unused) - 15).' more</>');
         }
 
         $this->newLine();

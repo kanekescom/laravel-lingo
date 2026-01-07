@@ -179,12 +179,12 @@ describe('Lingo static methods', function () {
     });
 
     it('can save and load translation files', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-test-' . getmypid();
+        $tempDir = sys_get_temp_dir().'/lingo-test-'.getmypid();
         if (! is_dir($tempDir)) {
             mkdir($tempDir, 0777, true);
         }
 
-        $filePath = $tempDir . '/test.json';
+        $filePath = $tempDir.'/test.json';
         $translations = ['Hello' => 'Halo', 'World' => 'Dunia'];
 
         $saved = Lingo::save($filePath, $translations);
@@ -206,20 +206,20 @@ describe('Lingo static methods', function () {
     });
 
     it('can scan directory for translation keys', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-scan-' . getmypid();
+        $tempDir = sys_get_temp_dir().'/lingo-scan-'.getmypid();
         if (! is_dir($tempDir)) {
             mkdir($tempDir, 0777, true);
         }
 
         $phpContent = "<?php echo __('Test Key'); echo trans('Another Key');";
-        file_put_contents($tempDir . '/test.php', $phpContent);
+        file_put_contents($tempDir.'/test.php', $phpContent);
 
         $keys = Lingo::scanDirectory($tempDir);
 
         expect($keys)->toContain('Test Key');
         expect($keys)->toContain('Another Key');
 
-        @unlink($tempDir . '/test.php');
+        @unlink($tempDir.'/test.php');
         @rmdir($tempDir);
     });
 
@@ -254,12 +254,12 @@ describe('Lingo static methods', function () {
     });
 
     it('returns null when loading invalid JSON file', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-invalid-' . getmypid();
+        $tempDir = sys_get_temp_dir().'/lingo-invalid-'.getmypid();
         if (! is_dir($tempDir)) {
             mkdir($tempDir, 0777, true);
         }
 
-        $filePath = $tempDir . '/invalid.json';
+        $filePath = $tempDir.'/invalid.json';
         file_put_contents($filePath, 'not valid json {{{');
 
         $result = Lingo::load($filePath);
@@ -312,37 +312,37 @@ describe('Lingo static methods', function () {
     });
 
     it('can scan single file for translation keys', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-scan-file-' . getmypid();
+        $tempDir = sys_get_temp_dir().'/lingo-scan-file-'.getmypid();
         if (! is_dir($tempDir)) {
             mkdir($tempDir, 0777, true);
         }
 
         $phpContent = "<?php echo __('FileKey'); echo trans('AnotherKey');";
-        file_put_contents($tempDir . '/single.php', $phpContent);
+        file_put_contents($tempDir.'/single.php', $phpContent);
 
-        $keys = Lingo::scan($tempDir . '/single.php');
+        $keys = Lingo::scan($tempDir.'/single.php');
 
         expect($keys)->toContain('FileKey');
         expect($keys)->toContain('AnotherKey');
 
-        @unlink($tempDir . '/single.php');
+        @unlink($tempDir.'/single.php');
         @rmdir($tempDir);
     });
 
     it('can scan directory using scan method', function () {
-        $tempDir = sys_get_temp_dir() . '/lingo-scan-dir-' . getmypid();
+        $tempDir = sys_get_temp_dir().'/lingo-scan-dir-'.getmypid();
         if (! is_dir($tempDir)) {
             mkdir($tempDir, 0777, true);
         }
 
         $phpContent = "<?php echo __('DirKey');";
-        file_put_contents($tempDir . '/test.php', $phpContent);
+        file_put_contents($tempDir.'/test.php', $phpContent);
 
         $keys = Lingo::scan($tempDir);
 
         expect($keys)->toContain('DirKey');
 
-        @unlink($tempDir . '/test.php');
+        @unlink($tempDir.'/test.php');
         @rmdir($tempDir);
     });
 

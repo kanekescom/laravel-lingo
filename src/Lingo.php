@@ -74,7 +74,7 @@ class Lingo
         $keys = $matches[1];
         $counts = array_count_values($keys);
 
-        return array_filter($counts, fn($count) => $count > 1);
+        return array_filter($counts, fn ($count) => $count > 1);
     }
 
     /**
@@ -165,7 +165,7 @@ class Lingo
      */
     public static function untranslated(array $translations): array
     {
-        return array_filter($translations, fn($value, $key) => $key === $value, ARRAY_FILTER_USE_BOTH);
+        return array_filter($translations, fn ($value, $key) => $key === $value, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
@@ -186,7 +186,7 @@ class Lingo
      */
     public static function translated(array $translations): array
     {
-        return array_filter($translations, fn($value, $key) => $key !== $value, ARRAY_FILTER_USE_BOTH);
+        return array_filter($translations, fn ($value, $key) => $key !== $value, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
@@ -220,7 +220,7 @@ class Lingo
     public static function clean(array $translations): array
     {
         // Remove empty values
-        $cleaned = array_filter($translations, fn($value) => $value !== '');
+        $cleaned = array_filter($translations, fn ($value) => $value !== '');
 
         // Sort keys
         return static::sortKeys($cleaned);
@@ -330,7 +330,7 @@ class Lingo
             $matchesExtension = false;
 
             foreach ($extensions as $ext) {
-                if (str_ends_with($filename, '.' . $ext)) {
+                if (str_ends_with($filename, '.'.$ext)) {
                     $matchesExtension = true;
                     break;
                 }
@@ -394,7 +394,7 @@ class Lingo
      */
     public static function missing(array $translations, array $keys): array
     {
-        return array_values(array_filter($keys, fn($key) => ! array_key_exists($key, $translations)));
+        return array_values(array_filter($keys, fn ($key) => ! array_key_exists($key, $translations)));
     }
 
     /**
@@ -444,7 +444,7 @@ class Lingo
 
         return array_values(array_filter(
             $translationKeys,
-            fn($key) => ! isset($usedKeysFlipped[$key])
+            fn ($key) => ! isset($usedKeysFlipped[$key])
         ));
     }
 
@@ -472,7 +472,7 @@ class Lingo
 
         return array_filter(
             $translations,
-            fn($value, $key) => isset($usedKeysFlipped[$key]),
+            fn ($value, $key) => isset($usedKeysFlipped[$key]),
             ARRAY_FILTER_USE_BOTH
         );
     }

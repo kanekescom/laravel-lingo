@@ -218,7 +218,7 @@ class LingoBuilder
     {
         $this->translations = array_filter(
             $this->translations,
-            fn($value) => $value !== ''
+            fn ($value) => $value !== ''
         );
 
         return $this;
@@ -302,7 +302,7 @@ class LingoBuilder
 
         // Fallback to app's current locale
         if ($path === null) {
-            $path = lang_path(app()->getLocale() . '.json');
+            $path = lang_path(app()->getLocale().'.json');
         }
 
         return Lingo::save($path, $this->translations, $sort);
