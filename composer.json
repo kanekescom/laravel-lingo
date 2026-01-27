@@ -2,7 +2,8 @@
     "name": "kanekescom/laravel-lingo",
     "description": "Laravel package to manage, sync, and analyze JSON translation files",
     "keywords": [
-        "Kanekescom",
+        "kanekes",
+        "kanekescom",
         "laravel",
         "laravel-lingo"
     ],
