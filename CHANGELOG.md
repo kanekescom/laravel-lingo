@@ -1,5 +1,19 @@
 # Release Notes
 
+## v1.0.5 - 2026-01-27
+
+### What's Changed
+
+* chore(deps): bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/kanekescom/laravel-lingo/pull/9
+* refactor: remove unused file by @achmadhadikurnia in https://github.com/kanekescom/laravel-lingo/pull/10
+* chore: rename info by @achmadhadikurnia in https://github.com/kanekescom/laravel-lingo/pull/11
+
+### New Contributors
+
+* @dependabot[bot] made their first contribution in https://github.com/kanekescom/laravel-lingo/pull/9
+
+**Full Changelog**: https://github.com/kanekescom/laravel-lingo/compare/v1.0.4...v1.0.5
+
 ## v1.0.4 - 2026-01-07
 
 ### What's Changed
