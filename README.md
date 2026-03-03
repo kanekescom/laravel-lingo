@@ -23,38 +23,6 @@ composer require kanekescom/laravel-lingo
 
 ## Usage
 
-### Basic Usage
-
-```php
-use Kanekescom\Lingo\Facades\Lingo;
-
-// Load by locale and manipulate
-Lingo::locale('id')->sortKeys()->save();
-Lingo::locale('id')->clean()->save();
-
-// Sync with source files
-Lingo::locale('id')->sync()->save();                                    // Default: resources/views
-Lingo::locale('id')->sync('app/Filament')->save();                      // Single folder
-Lingo::locale('id')->sync(['resources/views', 'app/Filament'])->save(); // Multiple paths
-Lingo::locale('id')->sync('app/Http/Controllers/HomeController.php')->save(); // Single file
-
-// Get data
-$stats = Lingo::locale('id')->stats();
-$untranslated = Lingo::locale('id')->onlyUntranslated()->get();
-
-// Create from array (overwrites file)
-lingo(['Hello' => 'Halo'], 'id')->save();
-
-// Using helper with sync (cleaner syntax)
-lingo()->sync(['resources/views', 'app/Filament'])->to('id')->save();
-
-// Merge with existing translations
-Lingo::locale('id')->merge(['Hello' => 'Halo'])->save();
-
-// Without locale - fallback to app()->getLocale()
-lingo(['Hello' => 'Halo'])->save();
-```
-
 ### Artisan Commands
 
 All commands accept an optional `locale` argument. If omitted, defaults to `config('app.locale')`.
@@ -88,6 +56,38 @@ php artisan lingo:sync id --dry-run                 # Preview changes
 ```
 
 > **Note:** All paths are relative to your application root. Both files and directories are supported.
+
+### Basic Usage
+
+```php
+use Kanekescom\Lingo\Facades\Lingo;
+
+// Load by locale and manipulate
+Lingo::locale('id')->sortKeys()->save();
+Lingo::locale('id')->clean()->save();
+
+// Sync with source files
+Lingo::locale('id')->sync()->save();                                    // Default: resources/views
+Lingo::locale('id')->sync('app/Filament')->save();                      // Single folder
+Lingo::locale('id')->sync(['resources/views', 'app/Filament'])->save(); // Multiple paths
+Lingo::locale('id')->sync('app/Http/Controllers/HomeController.php')->save(); // Single file
+
+// Get data
+$stats = Lingo::locale('id')->stats();
+$untranslated = Lingo::locale('id')->onlyUntranslated()->get();
+
+// Create from array (overwrites file)
+lingo(['Hello' => 'Halo'], 'id')->save();
+
+// Using helper with sync (cleaner syntax)
+lingo()->sync(['resources/views', 'app/Filament'])->to('id')->save();
+
+// Merge with existing translations
+Lingo::locale('id')->merge(['Hello' => 'Halo'])->save();
+
+// Without locale - fallback to app()->getLocale()
+lingo(['Hello' => 'Halo'])->save();
+```
 
 ### Available Methods
 
