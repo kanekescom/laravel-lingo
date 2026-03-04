@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.0.7 - 2026-03-04
+
+### What's Changed
+
+* update: Readme by @achmadhadikurnia in https://github.com/kanekescom/laravel-lingo/pull/13
+
+**Full Changelog**: https://github.com/kanekescom/laravel-lingo/compare/v1.0.6...v1.0.7
+
 ## v1.0.6 - 2026-03-04
 
 ### What's Changed
