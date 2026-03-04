@@ -2,7 +2,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/kanekescom/laravel-lingo.svg?style=flat-square)](https://packagist.org/packages/kanekescom/laravel-lingo)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/kanekescom/laravel-lingo/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/kanekescom/laravel-lingo/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/kanekescom/laravel-lingo/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/kanekescom/laravel-lingo/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)****
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/kanekescom/laravel-lingo/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/kanekescom/laravel-lingo/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/kanekescom/laravel-lingo.svg?style=flat-square)](https://packagist.org/packages/kanekescom/laravel-lingo)
 
 Laravel package to manage, sync, and analyze JSON translation files.
